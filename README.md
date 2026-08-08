@@ -12,13 +12,13 @@ Start the Apple container service:
 container system start
 ```
 
-Then run the three build and setup commands:
+Then run the build and setup script:
 
 ```sh
 ./build.sh
 ```
 
-The script builds `local/ubuntu-machine:24.04`, creates a persistent machine named `ubuntu`, and makes it the default container machine.
+The script builds `local/ubuntu-machine:24.04`, creates a persistent machine named `ubuntu`, and makes it the default. It uses your current macOS short username for the Linux account, replacing any character other than a letter, digit, or underscore with `_`. The Linux account gets an independent home at `/home/<username>`.
 
 ## Use Ubuntu
 
@@ -28,7 +28,9 @@ Open an interactive shell:
 container machine run -n ubuntu
 ```
 
-Apple `container` creates a Linux user matching the macOS user and shares the macOS home directory with the machine. A stopped machine starts automatically when `container machine run` is called.
+Apple still mounts your macOS home at its normal absolute path, such as `/Users/jhoward`. The setup also creates `/mnt/mac-home` as a clearer symlink to that mount. Changes under either path affect the same files on the Mac; the Linux home and its startup files remain separate.
+
+Apple preserves the host working directory when it is under the mounted Mac home. For example, starting the machine from this directory may open the shell in `/Users/jhoward/git/maccontainers`, even though `$HOME` is `/home/jhoward`. A stopped machine starts automatically when `container machine run` is called.
 
 ## Check systemd
 
