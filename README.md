@@ -20,6 +20,18 @@ Then run the build and setup script:
 
 The script builds `local/ubuntu-machine:24.04`, creates a persistent machine named `ubuntu`, and makes it the default. It uses your current macOS short username for the Linux account, replacing any character other than a letter, digit, or underscore with `_`. The Linux account gets an independent home at `/home/<username>`.
 
+The image sets the guest `eth0` MTU to 1400. An MTU of 1500 caused large HTTPS downloads to stall on this setup, while 1400 allows direct downloads without a host proxy. It also expands `/dev/shm` from Apple's 64 MB default to half the machine's memory so Bazel's parallel sandboxes do not exhaust it.
+
+## Start the container service at login
+
+Install a per-user LaunchAgent so `container system start` runs automatically when you log in:
+
+```sh
+./install-autostart.sh
+```
+
+The script loads the LaunchAgent immediately and for future logins. It starts Apple's container service, but leaves the Ubuntu machine stopped until `container machine run` is called.
+
 ## Use Ubuntu
 
 Open an interactive shell:
@@ -34,10 +46,10 @@ Apple preserves the host working directory when it is under the mounted Mac home
 
 ## Check systemd
 
-Run the two checks in `check.sh`:
+Run the checks in `check.sh`:
 
 ```sh
 ./check.sh
 ```
 
-The first reports whether systemd reached a usable state. The second lists running services.
+They report whether systemd reached a usable state, show the configured network MTU and shared-memory capacity, and list running services.

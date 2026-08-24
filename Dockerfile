@@ -4,7 +4,8 @@ ENV container container
 
 RUN apt-get update && \
     apt-get install -y \
-    dbus systemd openssh-server net-tools iproute2 iputils-ping curl wget vim-tiny man sudo && \
+    build-essential clang cmake curl dbus git iproute2 iputils-ping man net-tools \
+    ninja-build openssh-server pkg-config sudo systemd uuid-dev vim-tiny wget && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     yes | unminimize
@@ -21,5 +22,8 @@ RUN systemctl mask \
       console-getty.service
 RUN systemctl disable \
       networkd-dispatcher.service
+
+COPY container-machine-setup.service /etc/systemd/system/
+RUN systemctl enable container-machine-setup.service
 
 RUN sed -i -e 's/^AcceptEnv LANG LC_\*$/#AcceptEnv LANG LC_*/' /etc/ssh/sshd_config

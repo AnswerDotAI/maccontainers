@@ -1,0 +1,12 @@
+[Unit]
+Description=Configure the container development machine
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/ip link set dev eth0 mtu 1400
+ExecStart=/usr/bin/mount -o remount,size=50%% /dev/shm
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
