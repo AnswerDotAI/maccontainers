@@ -6,6 +6,9 @@ mac_uid=$(id -u)
 mac_user=$(id -un)
 linux_user=$(printf '%s' "$mac_user" | LC_ALL=C tr -c 'A-Za-z0-9_' '_')
 
+dns_domains=$(container system dns list --quiet)
+if ! printf '%s\n' "$dns_domains" | grep -qx machine; then sudo container system dns create machine; fi
+
 container build -t local/ubuntu-machine:24.04 .
 container machine create local/ubuntu-machine:24.04 --name ubuntu
 container machine set-default ubuntu
