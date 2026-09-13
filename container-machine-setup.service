@@ -1,11 +1,13 @@
 [Unit]
 Description=Configure the container development machine
 After=network.target
+Before=docker.service
 
 [Service]
 Type=oneshot
 ExecStart=/usr/sbin/ip link set dev eth0 mtu 1400
 ExecStart=/usr/bin/mount -o remount,size=50%% /dev/shm
+ExecStart=/usr/bin/mount -o remount,rw /proc/sys
 RemainAfterExit=yes
 
 [Install]
